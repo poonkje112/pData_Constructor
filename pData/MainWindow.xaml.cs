@@ -36,6 +36,8 @@ namespace pData
 			}
 			
 			if(_GitUser == null) Close();
+
+			Repository[] repos = _GitUser.GetRepos();
 		}
 	}
 }
