@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:pData"
         mc:Ignorable="d"
-        Title="Github Auth" Height="156" Width="295">
+        Title="Github Auth" Height="156" Width="295" WindowStartupLocation="CenterScreen">
     <Grid>
         <Label Content="Email: " HorizontalAlignment="Right" Margin="0,0,204,85" VerticalAlignment="Bottom" Width="41"/>
         <TextBox x:Name="_Email" HorizontalAlignment="Right" Margin="0,0,15,88" Text="" TextWrapping="Wrap" VerticalAlignment="Bottom" Width="186"/>

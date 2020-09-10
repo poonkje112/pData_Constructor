@@ -34,10 +34,19 @@ namespace pData
 				auth.ShowDialog();
 				_GitUser = auth.User;
 			}
-			
-			if(_GitUser == null) Close();
+
+			if (_GitUser == null)
+			{
+				Close();
+				return;
+			}
 
 			Repository[] repos = _GitUser.GetRepos();
+
+			for(int i = 0; i < repos.Length; i++)
+			{
+				Datagrid.Items.Add(repos[i]);
+			}
 		}
 	}
 }

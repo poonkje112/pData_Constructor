@@ -5,8 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:pData"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Repo Overview" Height="450" Width="800" WindowStartupLocation="CenterScreen">
     <Grid>
-
+        <DataGrid AutoGenerateColumns="False" Name="Datagrid" ItemsSource="{Binding TestBinding}" Margin="0,0,0,0" >
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Owner" IsReadOnly="True" Binding="{Binding Path=Owner}" Width="100"></DataGridTextColumn>
+                <DataGridTextColumn Header="Repo Name" IsReadOnly="True"  Binding="{Binding Path=Name}" Width="150"></DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using System.Windows;
 
 namespace pData
 {
@@ -10,14 +11,12 @@ namespace pData
     {
         string _Email;
         string _Username;
-        string _Token;
         WebHeaderCollection _Headers;
 
         private GithubUser(string email, string username, string token)
         {
             _Email = email;
             _Username = username;
-            _Token = token;
 
             _Headers = new WebHeaderCollection();
             _Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0");
@@ -38,7 +37,27 @@ namespace pData
                 client.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0");
                 client.Headers.Add("Authorization", $"token {token}");
                 client.Headers.Add("content-type", "application/json");
-                JObject data = JObject.Parse(client.DownloadString("https://api.github.com/user"));
+
+                JObject data;
+
+                try
+                {
+                    data = JObject.Parse(client.DownloadString("https://api.github.com/user"));
+                } catch(WebException ex) {
+                    switch(ex.Status)
+                    {
+                        case WebExceptionStatus.ProtocolError:
+                            MessageBox.Show("Invalid Token!", "Error!", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            break;
+
+                        default:
+                            MessageBox.Show(ex.Message, "Unknown Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                            break;
+                    }
+
+                    return false;
+                }
+
                 return !string.IsNullOrEmpty(data["login"].ToString());
             }
         }
