@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace pData
@@ -43,8 +44,10 @@ namespace pData
                 try
                 {
                     data = JObject.Parse(client.DownloadString("https://api.github.com/user"));
-                } catch(WebException ex) {
-                    switch(ex.Status)
+                }
+                catch (WebException ex)
+                {
+                    switch (ex.Status)
                     {
                         case WebExceptionStatus.ProtocolError:
                             MessageBox.Show("Invalid Token!", "Error!", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -67,18 +70,53 @@ namespace pData
             Repository[] repos;
             using (WebClient client = new WebClient())
             {
-                client.Headers = _Headers;
-                JArray data = JArray.Parse(client.DownloadString("https://api.github.com/user/repos"));
+                client.Headers = ConstructHeaders();
+                string json = client.DownloadString("https://api.github.com/user/repos");
+                JArray data = JArray.Parse(json);
                 repos = new Repository[data.Count];
 
-                for(int i = 0; i < repos.Length; i++)
+                for (int i = 0; i < repos.Length; i++)
                 {
                     JObject obj = (JObject)data[i];
-                    repos[i] = new Repository(obj["owner"]["login"].ToString(), obj["name"].ToString(), obj["url"].ToString());
+                    repos[i] = new Repository(obj["owner"]["login"].ToString(), obj["name"].ToString(), obj["url"].ToString(), (bool)obj["private"]);
                 }
             }
 
             return repos;
+        }
+
+        WebHeaderCollection ConstructHeaders()
+        {
+            WebHeaderCollection headers = new WebHeaderCollection();
+            headers.Set("User-Agent", _Headers.Get("User-Agent"));
+            headers.Set("content-type", _Headers.Get("content-type"));
+            headers.Set("Authorization", _Headers.Get("Authorization"));
+
+            return headers;
+        }
+
+        //TODO Add SHA for updating file
+        public bool PushData(string data, Repository repo)
+        {
+            using (WebClient client = new WebClient())
+            {
+                client.Headers = ConstructHeaders();
+
+                JObject json = new JObject()
+                {
+                    ["message"] = "Added/Updated .pdata file",
+                    ["content"] = data,
+                    ["committer"] = new JObject()
+                    {
+                        ["name"] = _Username,
+                        ["email"] = _Email
+                    }
+                };
+
+                string response = client.UploadString($"https://api.github.com/repos/{repo.Owner}/{repo.Name}/contents/.pdata", "PUT", json.ToString());
+            }
+
+            return true;
         }
     }
 }

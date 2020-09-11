@@ -1,0 +1,26 @@
+﻿<Window x:Class="pData.Editor"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:pData"
+        mc:Ignorable="d"
+        Title="Editor" Height="450" Width="800" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Label x:Name="Name" Content="poonkje112/Test Repository Shizzle" Margin="0,0,368,372" FontWeight="Bold" FontSize="24" HorizontalAlignment="Right" Width="412" Height="42" VerticalAlignment="Bottom"/>
+
+        <TextBox x:Name="YouTubeVideo" HorizontalAlignment="Right" Margin="0,0,176,152" Text="Youtube Video" TextWrapping="NoWrap" VerticalAlignment="Bottom" Width="224" AutoWordSelection="True"/>
+        <Button x:Name="ScreenshotBtn" Content="Screenshots" HorizontalAlignment="Right" Margin="0,0,176,117" VerticalAlignment="Bottom" Width="224" Click="ScreenshotBtn_Click"/>
+
+        <Label Content="Project Description" HorizontalAlignment="Right" Height="38" Margin="0,0,537,293" VerticalAlignment="Bottom" Width="131"/>
+        <TextBox x:Name="projectDesc" HorizontalAlignment="Right" Margin="0,0,439,224" Text="" TextWrapping="WrapWithOverflow" VerticalAlignment="Bottom" Width="224" Height="79" AcceptsReturn="True"/>
+
+        <Label Content="Why it started" HorizontalAlignment="Right" Height="38" Margin="0,0,537,162" VerticalAlignment="Bottom" Width="131"/>
+        <TextBox x:Name="StartedDesc" Margin="0,0,439,93" Text="" TextWrapping="WrapWithOverflow" VerticalAlignment="Bottom" Height="79" HorizontalAlignment="Right" Width="224" AcceptsReturn="True"/>
+
+        <Label Content="What is/was the goal" HorizontalAlignment="Right" Height="38" Margin="0,0,274,293" VerticalAlignment="Bottom" Width="131"/>
+        <TextBox x:Name="goalDesc" HorizontalAlignment="Right" Margin="0,0,176,224" Text="" TextWrapping="WrapWithOverflow" Width="224" AcceptsReturn="True" Height="79" VerticalAlignment="Bottom"/>
+        <Label x:Name="ImageCount" Content="Image count: 0" HorizontalAlignment="Right" Height="28" Margin="0,0,176,83" VerticalAlignment="Bottom" Width="224"/>
+        <Button x:Name="ApplyBtn" Content="Apply Data" HorizontalAlignment="Right" Margin="0,0,176,36" VerticalAlignment="Bottom" Width="487" Click="ApplyBtn_Click"/>
+    </Grid>
+</Window>

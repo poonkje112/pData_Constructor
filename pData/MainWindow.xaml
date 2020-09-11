@@ -5,13 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:pData"
         mc:Ignorable="d"
-        Title="Repo Overview" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+        Title="Repo Overview" Height="450" Width="800" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Grid>
-        <DataGrid AutoGenerateColumns="False" Name="Datagrid" ItemsSource="{Binding TestBinding}" Margin="0,0,0,0" >
+        <DataGrid AutoGenerateColumns="False" Name="Datagrid" ItemsSource="{Binding TestBinding}" Margin="0,0,0,35" MouseDoubleClick="Datagrid_MouseDoubleClick">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Owner" IsReadOnly="True" Binding="{Binding Path=Owner}" Width="100"></DataGridTextColumn>
-                <DataGridTextColumn Header="Repo Name" IsReadOnly="True"  Binding="{Binding Path=Name}" Width="150"></DataGridTextColumn>
+                <DataGridTextColumn Header="Owner" IsReadOnly="True" Binding="{Binding Path=Owner}" Width="100" CanUserSort="False"></DataGridTextColumn>
+                <DataGridTextColumn Header="Repo Name" IsReadOnly="True"  Binding="{Binding Path=Name}" Width="150" CanUserSort="False"></DataGridTextColumn>
+                <DataGridTextColumn Header="Private" IsReadOnly="True"  Binding="{Binding Path=IsPrivate}" Width="50" CanUserSort="False"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
+        <Button x:Name="RefreshBtn" Content="Refresh" Margin="10,0,0,6" Click="RefreshBtn_Click" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="43"/>
+        <CheckBox x:Name="HideReposCheckBox" Content="Hide Private Repositories" Margin="70,0,0,8" Checked="HideReposCheckBox_Checked" Unchecked="HideReposCheckBox_Checked" Height="15" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="152"/>
     </Grid>
 </Window>

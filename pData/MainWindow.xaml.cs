@@ -24,6 +24,7 @@ namespace pData
 	public partial class MainWindow : Window
 	{
 		GithubUser _GitUser;
+		List<Repository> _Repos;
 
 		public MainWindow()
 		{
@@ -41,12 +42,52 @@ namespace pData
 				return;
 			}
 
-			Repository[] repos = _GitUser.GetRepos();
+			Refresh();
+		}
 
-			for(int i = 0; i < repos.Length; i++)
+		private void Datagrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			if (Datagrid.SelectedIndex < 0 || Datagrid.SelectedIndex > _Repos.Count) return;
+
+			Repository selectedRepo = _Repos[Datagrid.SelectedIndex];
+
+			Editor editor = new Editor(_GitUser, _Repos[Datagrid.SelectedIndex]);
+			editor.Name.Content = $"{selectedRepo.Owner}/{selectedRepo.Name}";
+			editor.ShowDialog();
+		}
+
+		private void RefreshBtn_Click(object sender, RoutedEventArgs e)
+		{
+			Refresh(HideReposCheckBox.IsChecked.Value);
+		}
+
+		void Refresh(bool hidePrivate = false)
+		{
+			if (Datagrid.Items.Count > 0)
 			{
-				Datagrid.Items.Add(repos[i]);
+				Datagrid.Items.Clear();
 			}
+
+			_Repos = _GitUser.GetRepos().ToList();
+
+			// Removes all private repositories
+			if(hidePrivate)
+			{
+				for(int i = _Repos.Count-1; i >= 0; i--) {
+					if (_Repos[i].IsPrivate) _Repos.RemoveAt(i);
+				}
+			}
+
+
+			for (int i = 0; i < _Repos.Count; i++)
+			{
+				Datagrid.Items.Add(_Repos[i]);
+			}
+		}
+
+		private void HideReposCheckBox_Checked(object sender, RoutedEventArgs e)
+		{
+			Refresh(HideReposCheckBox.IsChecked.Value);
 		}
 	}
 }
