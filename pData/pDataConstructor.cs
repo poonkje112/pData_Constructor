@@ -6,6 +6,7 @@ namespace pData
 {
     public struct pDataConstructor
     {
+        public string Card;
         public string ProjectDescription;
         public string ProjectGoal;
         public string ProjectStarted;

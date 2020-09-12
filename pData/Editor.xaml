@@ -10,7 +10,7 @@
         <Label x:Name="Name" Content="poonkje112/Test Repository Shizzle" Margin="0,0,368,372" FontWeight="Bold" FontSize="24" HorizontalAlignment="Right" Width="412" Height="42" VerticalAlignment="Bottom"/>
 
         <TextBox x:Name="YouTubeVideo" HorizontalAlignment="Right" Margin="0,0,176,152" Text="Youtube Video" TextWrapping="NoWrap" VerticalAlignment="Bottom" Width="224" AutoWordSelection="True"/>
-        <Button x:Name="ScreenshotBtn" Content="Screenshots" HorizontalAlignment="Right" Margin="0,0,176,117" VerticalAlignment="Bottom" Width="224" Click="ScreenshotBtn_Click"/>
+        <Button x:Name="ScreenshotBtn" Content="Screenshots" HorizontalAlignment="Right" Margin="0,0,176,95" VerticalAlignment="Bottom" Width="224" Click="ScreenshotBtn_Click"/>
 
         <Label Content="Project Description" HorizontalAlignment="Right" Height="38" Margin="0,0,537,293" VerticalAlignment="Bottom" Width="131"/>
         <TextBox x:Name="projectDesc" HorizontalAlignment="Right" Margin="0,0,439,224" Text="" TextWrapping="WrapWithOverflow" VerticalAlignment="Bottom" Width="224" Height="79" AcceptsReturn="True"/>
@@ -20,7 +20,8 @@
 
         <Label Content="What is/was the goal" HorizontalAlignment="Right" Height="38" Margin="0,0,274,293" VerticalAlignment="Bottom" Width="131"/>
         <TextBox x:Name="goalDesc" HorizontalAlignment="Right" Margin="0,0,176,224" Text="" TextWrapping="WrapWithOverflow" Width="224" AcceptsReturn="True" Height="79" VerticalAlignment="Bottom"/>
-        <Label x:Name="ImageCount" Content="Image count: 0" HorizontalAlignment="Right" Height="28" Margin="0,0,176,83" VerticalAlignment="Bottom" Width="224"/>
+        <Label x:Name="ImageCount" Content="Image count: 0" HorizontalAlignment="Right" Height="28" Margin="0,0,176,61" VerticalAlignment="Bottom" Width="224"/>
         <Button x:Name="ApplyBtn" Content="Apply Data" HorizontalAlignment="Right" Margin="0,0,176,36" VerticalAlignment="Bottom" Width="487" Click="ApplyBtn_Click"/>
+        <Button x:Name="CardImgBtn" Content="Card" HorizontalAlignment="Right" Margin="0,0,176,122" VerticalAlignment="Bottom" Width="224" Click="CardImgBtn_Click"/>
     </Grid>
 </Window>

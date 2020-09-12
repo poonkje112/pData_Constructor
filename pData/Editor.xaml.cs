@@ -24,6 +24,7 @@ namespace pData
     public partial class Editor : Window
     {
         List<string> _ImageFiles = new List<string>();
+        string _CardImage;
         GithubUser _GitUser;
         Repository _Repository;
         string _Sha = null;
@@ -101,10 +102,13 @@ namespace pData
                 base64Images.Add(Convert.ToBase64String(File.ReadAllBytes(file)));
             }
 
+            string card64 = Convert.ToBase64String(File.ReadAllBytes(_CardImage));
+
 
             pDataConstructor data = new pDataConstructor
             {
                 Images = base64Images.ToArray(),
+                Card = card64,
                 ProjectDescription = projectDesc.Text,
                 ProjectGoal = goalDesc.Text,
                 ProjectStarted = StartedDesc.Text,
@@ -134,6 +138,18 @@ namespace pData
             }
 
             Close();
+        }
+
+        private void CardImgBtn_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog imagesDialog = new OpenFileDialog();
+            imagesDialog.Multiselect = false;
+            imagesDialog.Filter = "png files (*.png)|*.png";
+
+            if (imagesDialog.ShowDialog() == true)
+            {
+                _CardImage = imagesDialog.FileName;
+            }
         }
     }
 }
