@@ -85,7 +85,7 @@ namespace pData
             return repos;
         }
 
-        WebHeaderCollection ConstructHeaders()
+        public WebHeaderCollection ConstructHeaders()
         {
             WebHeaderCollection headers = new WebHeaderCollection();
             headers.Set("User-Agent", _Headers.Get("User-Agent"));
@@ -95,8 +95,7 @@ namespace pData
             return headers;
         }
 
-        //TODO Add SHA for updating file
-        public bool PushData(string data, Repository repo)
+        public bool PushData(string data, Repository repo, string sha)
         {
             using (WebClient client = new WebClient())
             {
@@ -113,7 +112,9 @@ namespace pData
                     }
                 };
 
-                string response = client.UploadString($"https://api.github.com/repos/{repo.Owner}/{repo.Name}/contents/.pdata", "PUT", json.ToString());
+                if (!string.IsNullOrEmpty(sha)) json["sha"] = sha;
+
+                string response = client.UploadString($"{repo.Url}/contents/.pdata", "PUT", json.ToString());
             }
 
             return true;

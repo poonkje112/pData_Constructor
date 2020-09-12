@@ -1,8 +1,10 @@
 ﻿using Microsoft.Win32;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -24,12 +26,52 @@ namespace pData
         List<string> _ImageFiles = new List<string>();
         GithubUser _GitUser;
         Repository _Repository;
+        string _Sha = null;
 
         public Editor(GithubUser githubUser, Repository repo)
         {
             InitializeComponent();
             _GitUser = githubUser;
             _Repository = repo;
+
+            TryGetpData();
+        }
+
+        void TryGetpData()
+        {
+            using (WebClient client = new WebClient())
+            {
+                string url = $"https://raw.githubusercontent.com/{_Repository.Owner}/{_Repository.Name}/master/.pdata";
+                try
+                {
+                    client.Headers = _GitUser.ConstructHeaders();
+                    string response = client.DownloadString(url);
+                    pDataConstructor data = JsonConvert.DeserializeObject<pDataConstructor>(response);
+
+                    ImageCount.Content = $"Image count: {data.Images.Length}";
+                    projectDesc.Text = data.ProjectDescription;
+                    StartedDesc.Text = data.ProjectStarted;
+                    goalDesc.Text = data.ProjectGoal;
+                    YouTubeVideo.Text = data.YouTubeVideo;
+
+                    client.Headers = _GitUser.ConstructHeaders();
+                    JArray contents = JArray.Parse(client.DownloadString($"{_Repository.Url}/contents/"));
+
+                    //Get the sha of .pdata
+                    for(int i = 0; i < contents.Count; i++)
+                    {
+                        if(contents[i]["name"].ToString() == ".pdata")
+                        {
+                            _Sha = contents[i]["sha"].ToString();
+                            break;
+                        }
+                    }
+
+                } catch(Exception ex)
+                {
+                    return;
+                }
+            }
         }
 
         private void ScreenshotBtn_Click(object sender, RoutedEventArgs e)
@@ -85,7 +127,7 @@ namespace pData
             byte[] jsonBytes = Encoding.ASCII.GetBytes(json);
             string file64 = Convert.ToBase64String(jsonBytes);
 
-            if(_GitUser.PushData(file64, _Repository))
+            if (_GitUser.PushData(file64, _Repository, _Sha))
             {
                 // Delete file
                 File.Delete(@"C:\pdata_temp\.pdata");
