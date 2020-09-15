@@ -23,7 +23,7 @@ namespace pData
     /// </summary>
     public partial class Editor : Window
     {
-        List<string> _ImageFiles = new List<string>();
+        Dictionary<string, string> _ImageFiles = new Dictionary<string, string>();
         string _CardImage;
         GithubUser _GitUser;
         Repository _Repository;
@@ -49,11 +49,24 @@ namespace pData
                     string response = client.DownloadString(url);
                     pDataConstructor data = JsonConvert.DeserializeObject<pDataConstructor>(response);
 
-                    ImageCount.Content = $"Image count: {data.Images.Length}";
+                    string teamText = "";
+                    foreach (User value in data.TeamMembers.Values)
+                    {
+                        teamText += $"{value.Name}({value.Url}), ";
+                    }
+
+                    teamText = teamText.Substring(0, teamText.Length - 2);
+
+                    //_ImageFiles = data.Images;
+                    //ImageCount.Content = $"Image count: {data.Images.Count}";
                     projectDesc.Text = data.ProjectDescription;
                     StartedDesc.Text = data.ProjectStarted;
                     goalDesc.Text = data.ProjectGoal;
                     YouTubeVideo.Text = data.YouTubeVideo;
+                    ShortDesc.Text = data.ShortDescription;
+                    PlayUrl.Text = data.Demo;
+                    LangAndInfo.Text = String.Join(", ", data.LangAndInfo);
+                    TeamMembers.Text = teamText;
 
                     client.Headers = _GitUser.ConstructHeaders();
                     JArray contents = JArray.Parse(client.DownloadString($"{_Repository.Url}/contents/"));
@@ -87,7 +100,7 @@ namespace pData
             {
                 foreach (string file in imagesDialog.FileNames)
                 {
-                    _ImageFiles.Add(file);
+                    _ImageFiles.Add(_ImageFiles.Count.ToString(), file);
                 }
             }
 
@@ -96,26 +109,63 @@ namespace pData
 
         private void ApplyBtn_Click(object sender, RoutedEventArgs e)
         {
-            List<string> base64Images = new List<string>();
-            foreach (string file in _ImageFiles)
+            Dictionary<string, string> base64Images = new Dictionary<string, string>();
+            foreach (KeyValuePair<string, string> file in _ImageFiles)
             {
-                base64Images.Add(Convert.ToBase64String(File.ReadAllBytes(file)));
+                base64Images.Add(base64Images.Count.ToString(), Convert.ToBase64String(File.ReadAllBytes(file.Value)));
+            }
+            string card64 = "";
+
+            if (!string.IsNullOrEmpty(_CardImage))
+            {
+                card64 = Convert.ToBase64String(File.ReadAllBytes(_CardImage));
             }
 
-            string card64 = Convert.ToBase64String(File.ReadAllBytes(_CardImage));
+            string[] team = TeamMembers.Text.Split(", ");
+            string[] langAndInfo = LangAndInfo.Text.Split(", ");
 
+            Dictionary<string, User> teamMembers = new Dictionary<string, User>();
+
+            for (int i = 0; i < team.Length; i++)
+            {
+                team[i] = team[i].Replace(", ", "");
+            }
+
+            for(int i = 0; i < team.Length; i++)
+            {
+                int from = team[i].IndexOf("(") + "(".Length;
+                int to = team[i].LastIndexOf(')');
+                User user = new User()
+                {
+                    Url = team[i].Substring(from, to - from),
+                    Name = team[i].Substring(0, from - 1)
+                };
+
+                teamMembers.Add(i.ToString(), user);
+            }
+
+            for (int i = 0; i < langAndInfo.Length; i++)
+            {
+                langAndInfo[i] = langAndInfo[i].Replace(", ", "");
+            }
 
             pDataConstructor data = new pDataConstructor
             {
-                Images = base64Images.ToArray(),
+                Images = base64Images,
                 Card = card64,
                 ProjectDescription = projectDesc.Text,
                 ProjectGoal = goalDesc.Text,
                 ProjectStarted = StartedDesc.Text,
-                YouTubeVideo = YouTubeVideo.Text
+                YouTubeVideo = YouTubeVideo.Text,
+                ShortDescription = ShortDesc.Text,
+                GitSource = _Repository.RepoUrl,
+                LangAndInfo = langAndInfo,
+                TeamMembers = teamMembers,
+                Demo = PlayUrl.Text,
+                Name = _Repository.Name
             };
 
-            string json = JsonConvert.SerializeObject(data);
+            string json = JsonConvert.SerializeObject(data, Formatting.Indented);
 
             using (FileStream fs = new FileStream(@"C:\pdata_temp\.pdata", FileMode.Create, FileAccess.ReadWrite))
             {
@@ -135,6 +185,9 @@ namespace pData
             {
                 // Delete file
                 File.Delete(@"C:\pdata_temp\.pdata");
+            } else
+            {
+                return;
             }
 
             Close();

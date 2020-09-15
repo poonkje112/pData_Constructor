@@ -18,76 +18,78 @@ using System.Windows.Shapes;
 
 namespace pData
 {
-	/// <summary>
-	/// Interaction logic for MainWindow.xaml
-	/// </summary>
-	public partial class MainWindow : Window
-	{
-		GithubUser _GitUser;
-		List<Repository> _Repos;
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        GithubUser _GitUser;
+        List<Repository> _Repos;
 
-		public MainWindow()
-		{
-			InitializeComponent();
-			if (_GitUser == null)
-			{
-				Authenticator auth = new Authenticator();
-				auth.ShowDialog();
-				_GitUser = auth.User;
-			}
+        public MainWindow()
+        {
+            InitializeComponent();
 
-			if (_GitUser == null)
-			{
-				Close();
-				return;
-			}
+            if (_GitUser == null)
+            {
+                Authenticator auth = new Authenticator();
+                auth.ShowDialog();
+                _GitUser = auth.User;
+            }
 
-			Refresh();
-		}
+            if (_GitUser == null)
+            {
+                Close();
+                return;
+            }
 
-		private void Datagrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-		{
-			if (Datagrid.SelectedIndex < 0 || Datagrid.SelectedIndex > _Repos.Count) return;
+            Refresh();
+        }
 
-			Repository selectedRepo = _Repos[Datagrid.SelectedIndex];
+        private void Datagrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (Datagrid.SelectedIndex < 0 || Datagrid.SelectedIndex > _Repos.Count) return;
 
-			Editor editor = new Editor(_GitUser, _Repos[Datagrid.SelectedIndex]);
-			editor.Name.Content = $"{selectedRepo.Owner}/{selectedRepo.Name}";
-			editor.ShowDialog();
-		}
+            Repository selectedRepo = _Repos[Datagrid.SelectedIndex];
 
-		private void RefreshBtn_Click(object sender, RoutedEventArgs e)
-		{
-			Refresh(HideReposCheckBox.IsChecked.Value);
-		}
+            Editor editor = new Editor(_GitUser, _Repos[Datagrid.SelectedIndex]);
+            editor.Name.Content = selectedRepo.FullName;
+            editor.ShowDialog();
+        }
 
-		void Refresh(bool hidePrivate = false)
-		{
-			if (Datagrid.Items.Count > 0)
-			{
-				Datagrid.Items.Clear();
-			}
+        private void RefreshBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Refresh(HideReposCheckBox.IsChecked.Value);
+        }
 
-			_Repos = _GitUser.GetRepos().ToList();
+        void Refresh(bool hidePrivate = false)
+        {
+            if (Datagrid.Items.Count > 0)
+            {
+                Datagrid.Items.Clear();
+            }
 
-			// Removes all private repositories
-			if(hidePrivate)
-			{
-				for(int i = _Repos.Count-1; i >= 0; i--) {
-					if (_Repos[i].IsPrivate) _Repos.RemoveAt(i);
-				}
-			}
+            _Repos = _GitUser.GetRepos().ToList();
+
+            // Removes all private repositories
+            if (hidePrivate)
+            {
+                for (int i = _Repos.Count - 1; i >= 0; i--)
+                {
+                    if (_Repos[i].IsPrivate) _Repos.RemoveAt(i);
+                }
+            }
 
 
-			for (int i = 0; i < _Repos.Count; i++)
-			{
-				Datagrid.Items.Add(_Repos[i]);
-			}
-		}
+            for (int i = 0; i < _Repos.Count; i++)
+            {
+                Datagrid.Items.Add(_Repos[i]);
+            }
+        }
 
-		private void HideReposCheckBox_Checked(object sender, RoutedEventArgs e)
-		{
-			Refresh(HideReposCheckBox.IsChecked.Value);
-		}
-	}
+        private void HideReposCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            Refresh(HideReposCheckBox.IsChecked.Value);
+        }
+    }
 }

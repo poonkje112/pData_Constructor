@@ -78,7 +78,7 @@ namespace pData
                 for (int i = 0; i < repos.Length; i++)
                 {
                     JObject obj = (JObject)data[i];
-                    repos[i] = new Repository(obj["owner"]["login"].ToString(), obj["name"].ToString(), obj["url"].ToString(), (bool)obj["private"]);
+                    repos[i] = new Repository(obj["owner"]["login"].ToString(), obj["name"].ToString(), obj["url"].ToString(), obj["svn_url"].ToString(), (bool)obj["private"]);
                 }
             }
 
@@ -113,11 +113,45 @@ namespace pData
                 };
 
                 if (!string.IsNullOrEmpty(sha)) json["sha"] = sha;
+                else
+                {
+                    sha = TryGetSha(repo);
+                }
+
+                if (!string.IsNullOrEmpty(sha))
+                {
+                    json["sha"] = sha;
+                } else
+                {
+                    MessageBox.Show("Failed to get .pdata sha!", "Critical Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+                }
 
                 string response = client.UploadString($"{repo.Url}/contents/.pdata", "PUT", json.ToString());
             }
 
             return true;
+        }
+
+        string TryGetSha(Repository repo)
+        {
+            string sha = string.Empty;
+
+            using (WebClient client = new WebClient()) {
+                client.Headers = ConstructHeaders();
+                JArray contents = JArray.Parse(client.DownloadString($"{repo.Url}/contents/"));
+
+                //Get the sha of .pdata
+                for (int i = 0; i < contents.Count; i++)
+                {
+                    if (contents[i]["name"].ToString() == ".pdata")
+                    {
+                        sha = contents[i]["sha"].ToString();
+                        break;
+                    }
+                }
+            }
+            return sha;
         }
     }
 }
