@@ -71,7 +71,7 @@ namespace pData
             using (WebClient client = new WebClient())
             {
                 client.Headers = ConstructHeaders();
-                string json = client.DownloadString("https://api.github.com/user/repos");
+                string json = client.DownloadString("https://api.github.com/user/repos?per_page=1000");
                 JArray data = JArray.Parse(json);
                 repos = new Repository[data.Count];
 
