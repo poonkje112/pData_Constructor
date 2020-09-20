@@ -116,15 +116,7 @@ namespace pData
                 else
                 {
                     sha = TryGetSha(repo);
-                }
-
-                if (!string.IsNullOrEmpty(sha))
-                {
                     json["sha"] = sha;
-                } else
-                {
-                    MessageBox.Show("Failed to get .pdata sha!", "Critical Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return false;
                 }
 
                 string response = client.UploadString($"{repo.Url}/contents/.pdata", "PUT", json.ToString());

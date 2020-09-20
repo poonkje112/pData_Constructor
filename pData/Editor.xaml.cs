@@ -110,6 +110,8 @@ namespace pData
         private void ApplyBtn_Click(object sender, RoutedEventArgs e)
         {
             Dictionary<string, string> base64Images = new Dictionary<string, string>();
+            Dictionary<string, User> teamMembers = null;
+
             foreach (KeyValuePair<string, string> file in _ImageFiles)
             {
                 base64Images.Add(base64Images.Count.ToString(), Convert.ToBase64String(File.ReadAllBytes(file.Value)));
@@ -121,32 +123,39 @@ namespace pData
                 card64 = Convert.ToBase64String(File.ReadAllBytes(_CardImage));
             }
 
-            string[] team = TeamMembers.Text.Split(", ");
-            string[] langAndInfo = LangAndInfo.Text.Split(", ");
-
-            Dictionary<string, User> teamMembers = new Dictionary<string, User>();
-
-            for (int i = 0; i < team.Length; i++)
+            if (TeamMembers.Text.Length > 0)
             {
-                team[i] = team[i].Replace(", ", "");
-            }
+                string[] team = TeamMembers.Text.Split(", ");
+                teamMembers = new Dictionary<string, User>();
 
-            for(int i = 0; i < team.Length; i++)
-            {
-                int from = team[i].IndexOf("(") + "(".Length;
-                int to = team[i].LastIndexOf(')');
-                User user = new User()
+                for (int i = 0; i < team.Length; i++)
                 {
-                    Url = team[i].Substring(from, to - from),
-                    Name = team[i].Substring(0, from - 1)
-                };
+                    team[i] = team[i].Replace(", ", "");
+                }
 
-                teamMembers.Add(i.ToString(), user);
+                for (int i = 0; i < team.Length; i++)
+                {
+                    int from = team[i].IndexOf("(") + "(".Length;
+                    int to = team[i].LastIndexOf(')');
+                    User user = new User()
+                    {
+                        Url = team[i].Substring(from, to - from),
+                        Name = team[i].Substring(0, from - 1)
+                    };
+
+                    teamMembers.Add(i.ToString(), user);
+                }
             }
 
-            for (int i = 0; i < langAndInfo.Length; i++)
+            string[] langAndInfo = null;
+
+            if (LangAndInfo.Text.Length > 0)
             {
-                langAndInfo[i] = langAndInfo[i].Replace(", ", "");
+                langAndInfo = LangAndInfo.Text.Split(", ");
+                for (int i = 0; i < langAndInfo.Length; i++)
+                {
+                    langAndInfo[i] = langAndInfo[i].Replace(", ", "");
+                }
             }
 
             pDataConstructor data = new pDataConstructor
